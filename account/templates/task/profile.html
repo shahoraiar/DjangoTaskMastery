@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block body %}
+<div style="background-color: #f0f0f0; height: 100vh; display: flex; justify-content: center; align-items: center;">
+  <div class="container mt-4">
+    {% if messages %}
+  <div class="text-center">
+    {% for message in messages %}
+      <div class="alert alert-success" role="alert">
+        {{ message }}
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+<div style="background-color: #e1dec3; width: 100%; padding: 15px; border-radius: 10px; text-align: center; box-sizing: border-box;">
+  <h1>Welcome to Your Profile</h1>
+  <h2>Hello, {{ user }}</h2>
+</div>
+
+    <div class="card mx-auto mt-4" style="max-width: 600px;">
+      <div class="card-body">
+        <h2 class="card-title text-center">Update Your Data</h2>
+        
+        <form method="post" novalidate>
+          {% csrf_token %} 
+          {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+              {% for e in form.non_field_errors %}
+                {{ e }}
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          {% for field in form %}
+            <div class="mb-3">
+              {{ field.label_tag }}
+              <input type="{{ field.field.widget.input_type }}"
+                     name="{{ field.name }}"
+                     class="form-control"
+                     value="{{ field.value|default:'' }}"
+                     {% if field.field.required %}required{% endif %}>
+              {% if field.errors %}
+                <div class="text-danger">
+                  {{ field.errors|striptags }}
+                </div>
+              {% endif %}
+            </div>
+          {% endfor %}
+
+          <div class="text-center">
+            <button class="btn btn-warning btn-lg" type="submit">Update</button>
+          </div>
+        </form>
+        
+        <div class="text-center mt-3">
+          <a href="{% url 'passchange' %}" class="btn btn-primary btn-sm">Change Your Password</a>
+          <a href="{% url 'passchange2' %}" class="btn btn-secondary btn-sm">Change Your Password Without Old Password</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<style>
+    .form-field {
+        margin-bottom: 10px;
+    }
+</style>
+{% endblock body %}

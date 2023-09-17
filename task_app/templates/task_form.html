@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block body %}
+
+{% if user.is_authenticated %}
+
+<form method='post' class='custom-form'>
+  {% csrf_token %}
+  <h1 style="text-align: center;"><b><u>Add Your Task</u></b></h1>
+  {{form|crispy}}
+  <button class="btn btn-danger" type='submit'>Submit</button> <br> <br>
+  <a href="{% url 'show_task' %}" class="btn btn-primary">Show_Task</a>
+
+  {% else %}
+  <div style="text-align: center;">
+    <h1>Please log in to add tasks</h1>
+    <a href="{% url 'login' %}" class="btn btn-warning">Login</a>
+  </div>
+{% endif %}
+<style>
+  .custom-form {
+    background-color: #f0f0f0; 
+    padding: 20px;
+    border-radius: 10px;
+    width: 50%;
+    margin: auto;
+  }
+</style>
+
+
+{% endblock body %}

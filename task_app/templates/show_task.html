@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block body %}
+
+{% if user.is_authenticated %}
+
+<div style="width: 90%; margin: auto">
+  
+  {% if tasks %}
+  <div>
+    <table style="width: 100%;">
+      <tr>
+        <th style="text-align: right; width: 50%;"><h2>Task List</h2></th>
+        <th style="text-align: right; width: 50%;">
+          <h3><label for="sort">Sort by:</label>
+            <select id="sort" onchange="window.location.href = '{% url 'sort_tasks' sort_option='due_date' %}'.replace('due_date', this.value)">
+            <option>select</option>
+            <option value="due_date">Due Date</option>
+            <option value="priority">Priority</option>
+            <option value="category">Category</option>
+          </select>
+        </h3>
+      </th>
+    </table>
+  </div>
+  <table class="table table-bordered border-primary">
+    <thead class="table-primary">
+      <tr>
+        <th scope="col" style="text-align: center">Title</th>
+        <th scope="col" style="text-align: center">Description</th>
+        <th scope="col" style="text-align: center">priority</th>
+        <th scope="col" style="text-align: center">category</th>
+        <th scope="col" style="text-align: center">Status</th>
+        <th scope="col" style="text-align: center">create_at</th>
+        <th scope="col" style="text-align: center">due_date</th>
+        <th scope="col" style="text-align: center">remind_time</th>
+        <th scope="col" style="text-align: center">actions</th>
+          </tr>
+        </thead>
+    {% else %}
+    <div style="text-align: center;">
+      <h1>No Task Available</h1>
+    </div>
+    {% endif %}
+        <tbody>
+          {% for t in tasks %}
+          <tr>
+            {% if t.is_completed %}
+              <td style="text-align: center">-------</td>
+              <td style="text-align: center">-------</td>
+            {% else %}
+              <td class="td-completed" style="text-align: center">{{ t.taskTitle }}</td>
+              <td class="td-completed" style="text-align: center">{{ t.taskDescription }}</td>
+            {% endif %}
+            <td style="text-align: center">{{ t.priority }}</td>
+            <td style="text-align: center">{{ t.category }}</td>
+            <td>
+              {% if t.is_completed %}
+              <a href="{% url 'completed' %}">COMPLETE</a>
+              {% else %}
+              <h6 style="text-align: center">INCOMPLETE</h6>
+              {% endif %}
+            </td>
+            <td>{{ t.create_at }}</td>
+              <td>{{ t.due_date }}</td>
+
+              <td style="text-align: center">
+                {% if t.is_completed == True %}
+                  <h6 class="btn btn-primary">complete</h6>
+                {% else %}
+                  <h6 class="btn btn-danger"><b>{{t.due_date|timeuntil}}</b></h6>
+                {% endif %}
+              </td>
+
+            <td>
+              <div class="d-flex justify-content-between">
+                {% if not t.is_completed %}
+                <a href="{% url 'edit' pk=t.id %}" class="btn btn-warning"
+                >Edit</a
+                >
+                <a href="{% url 'delete' pk=t.id %}" class="btn btn-danger"
+                >Delete</a>
+                {% else %}
+                <button class="btn btn-warning" disabled>Edit</button>
+                <a href="{% url 'delete' pk=t.id %}" class="btn btn-danger"
+                >Delete</a>
+                {% endif %}
+                <a
+                  href="{% url 'mark_complete' id=t.id %}"
+                  class="btn btn-primary"
+                  >Complete</a
+                  >
+                </div>
+              </td>
+             
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <a href="{% url 'taskform' %}" class="btn btn-dark">ADD_Task</a>
+    </div>
+
+    {% else %}
+    <!--unauthenticated users -->
+    <div style="text-align: center;">
+      <h1>Please log in to show tasks</h1>
+      <a href="{% url 'login' %}" class="btn btn-warning">Login</a>
+    </div>
+  {% endif %}
+  
+
+{% endblock body %}
+
+

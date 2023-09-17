@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block body %}
+<div style="background-color :#8ad2de;">
+    
+    {% if messages %}
+<div style="width: 50%; margin: auto; text-align: center;background-color: #f00707; padding: 20px;; border-radius: 10px;">
+    {% for m in messages %}
+    <h3 style="color: rgb(169, 195, 197)">{{ m }}</h3>
+    {% endfor %}
+</div>
+{% endif %}
+<div style="width: 50%; margin: auto; background-color: #f0f0f0; padding: 20px; border-radius: 10px;">
+    <form method="post" novalidate>
+        <h1 style="text-align: center; color: #333;">SignUp Page</h1>
+        <!-- {{ form | crispy }} -->
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="form-field">
+            {{ field.label_tag }}
+            <br />
+            {{ field }}
+            {% if field.errors %}
+            <p class="error-message">{{ field.errors|striptags }}</p>
+            {% endif %}
+            {% if field.name == 'password1' %}
+            <p class="help-text">{{ form.password1.help_text }}</p>
+            {% elif field.name == 'password2' %}
+            <p class="help-text">{{ form.password2.help_text }}</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+        <!-- <br /> -->
+        <button class="btn btn-warning" type="submit">Sign Up</button> <br />
+        <small>Already have an account? <a href="{% url 'login' %}">Login</a></small>
+    </form>
+</div>
+<style>
+    .form-field {
+        margin-bottom: 10px;
+    }
+</style>
+</div>
+{% endblock body %}
