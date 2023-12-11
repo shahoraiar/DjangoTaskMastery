@@ -1,8 +1,19 @@
-from django.shortcuts import render , redirect
+from django.shortcuts import render , redirect 
 from task_app.models import TaskModel
 from task_app.forms import TaskForm
 from django.views.generic.edit import CreateView , UpdateView , DeleteView
 from django.urls import reverse_lazy
+from .serializers import TaskSerializer
+
+from rest_framework import status
+from rest_framework.decorators import APIView
+from rest_framework.response import Response
+
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication , TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+
+from rest_framework import mixins
+from rest_framework import generics
 # Create your views here.
 class task_form(CreateView):
     model = TaskModel
@@ -62,3 +73,44 @@ def sort_tasks(request, sort_option):
 
         return render(request, 'show_task.html', {'tasks': tasks})
     
+class TaskApiList(mixins.ListModelMixin,
+                  mixins.CreateModelMixin,
+                  generics.GenericAPIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication] #basicauthentication
+    # authentication_classes = [TokenAuthentication] 
+    permission_classes = [IsAuthenticated]
+    
+    # queryset = TaskModel.objects.filter(user=self.request.user)
+    serializer_class = TaskSerializer
+    
+    def get_queryset(self):
+        # Filter tasks for the currently logged-in user
+        return TaskModel.objects.filter(user=self.request.user)
+    
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+    # def perform_create(self, serializer):
+    #     serializer.save(user=self.request.user)
+         
+class TaskApiDetail(mixins.RetrieveModelMixin,
+                    mixins.UpdateModelMixin,
+                    mixins.DestroyModelMixin,
+                    generics.GenericAPIView):
+    # queryset = TaskModel.objects.all()
+    serializer_class = TaskSerializer
+
+    def get_queryset(self):
+        # Filter tasks for the currently logged-in user
+        return TaskModel.objects.filter(user=self.request.user)
+    
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)

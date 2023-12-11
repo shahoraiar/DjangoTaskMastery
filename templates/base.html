@@ -14,7 +14,8 @@
     <div class="container-fluid">
       <ul class="nav">
         <li class="nav-item">
-          <h2>To Do List</h2>
+          <!-- <h2>To Do List</h2> -->
+          <h2><a class="nav-link active" aria-current="page" href="{% url 'home' %}">To Do List</a></h2>
         </li>
       </ul>
       <div>
@@ -24,6 +25,9 @@
           </li>
           <li class="nav-item">
             <h3><a class="nav-link" href="{% url 'show_task' %}">ShowTask</a></h3>
+          </li>
+          <li class="nav-item">
+            <h3><a class="nav-link" href="{% url 'api' %}">APIs</a></h3>
           </li>
           
         </ul>
